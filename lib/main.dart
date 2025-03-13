@@ -31,10 +31,13 @@ Future<Null> getMarketData() async {
 
   Future<Null> _pullData(page) async {
     var response = await http.get(
-        Uri.encodeFull("https://min-api.cryptocompare.com/data/top/mktcapfull?tsym=USD&limit=100" +
+      Uri.encodeFull(
+        "https://min-api.cryptocompare.com/data/top/mktcapfull?tsym=USD&limit=100" +
             "&page=" +
-            page.toString()),
-        headers: {"Accept": "application/json"});
+            page.toString(),
+      ),
+      headers: {"Accept": "application/json"},
+    );
 
     List rawMarketListData = new JsonDecoder().convert(response.body)["Data"];
     tempMarketListData.addAll(rawMarketListData);
@@ -42,7 +45,7 @@ Future<Null> getMarketData() async {
 
   List<Future> futures = [];
   for (int i = 0; i < pages; i++) {
-    futures.add(_pullData(i));                                       
+    futures.add(_pullData(i));
   }
   await Future.wait(futures);
 
@@ -75,9 +78,6 @@ void main() async {
       jsonFile.writeAsStringSync("{}");
       portfolioMap = {};
     }
-    if (portfolioMap == null) {
-      portfolioMap = {};
-    }
     jsonFile = new File(directory.path + "/marketData.json");
     if (jsonFile.existsSync()) {
       marketListData = json.decode(jsonFile.readAsStringSync());
@@ -104,8 +104,12 @@ void main() async {
 
 numCommaParse(numString) {
   if (shortenOn) {
-    String str = num.parse(numString ?? "0").round().toString().replaceAllMapped(
-        new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+    String str = num.parse(
+      numString ?? "0",
+    ).round().toString().replaceAllMapped(
+      new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => "${m[1]},",
+    );
     List<String> strList = str.split(",");
 
     if (strList.length > 3) {
@@ -120,17 +124,19 @@ numCommaParse(numString) {
           "M";
     } else {
       return num.parse(numString ?? "0").toString().replaceAllMapped(
-          new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+        new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => "${m[1]},",
+      );
     }
   }
 
   return num.parse(numString ?? "0").toString().replaceAllMapped(
-      new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
+    new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+    (Match m) => "${m[1]},",
+  );
 }
 
 normalizeNum(num input) {
-  if (input == null) {
-    input = 0;}
   if (input >= 100000) {
     return numCommaParse(input.round().toString());
   } else if (input >= 1000) {
@@ -141,8 +147,6 @@ normalizeNum(num input) {
 }
 
 normalizeNumNoCommas(num input) {
-  if (input == null) {
-    input = 0;}
   if (input >= 1000) {
     return input.toStringAsFixed(2);
   } else {
@@ -223,14 +227,20 @@ class TraceAppState extends State<TraceApp> {
 
   setNavBarColor() async {
     if (darkEnabled) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.light.copyWith(
           systemNavigationBarIconBrightness: Brightness.light,
           systemNavigationBarColor:
-              darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor));
+              darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor,
+        ),
+      );
     } else {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle.dark.copyWith(
           systemNavigationBarIconBrightness: Brightness.dark,
-          systemNavigationBarColor: lightTheme.primaryColor));
+          systemNavigationBarColor: lightTheme.primaryColor,
+        ),
+      );
     }
   }
 
@@ -299,9 +309,12 @@ class TraceAppState extends State<TraceApp> {
     }
 
     return new MaterialApp(
-      color: darkEnabled
-          ? darkOLED ? darkThemeOLED.primaryColor : darkTheme.primaryColor
-          : lightTheme.primaryColor,
+      color:
+          darkEnabled
+              ? darkOLED
+                  ? darkThemeOLED.primaryColor
+                  : darkTheme.primaryColor
+              : lightTheme.primaryColor,
       title: "Trace",
       home: new Tabs(
         savePreferences: savePreferences,
@@ -312,9 +325,15 @@ class TraceAppState extends State<TraceApp> {
         switchOLED: switchOLED,
         darkOLED: darkOLED,
       ),
-      theme: darkEnabled ? darkOLED ? darkThemeOLED : darkTheme : lightTheme,
+      theme:
+          darkEnabled
+              ? darkOLED
+                  ? darkThemeOLED
+                  : darkTheme
+              : lightTheme,
       routes: <String, WidgetBuilder>{
-        "/settings": (BuildContext context) => new SettingsPage(
+        "/settings":
+            (BuildContext context) => new SettingsPage(
               savePreferences: savePreferences,
               toggleTheme: toggleTheme,
               darkEnabled: darkEnabled,
